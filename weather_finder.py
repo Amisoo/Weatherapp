@@ -5,47 +5,34 @@ import python_weather
 import asyncio
 import os
 
-kind_dict = {
-    "SUNNY": 1,
-    "PARTLY_CLOUDY": 2,
-    "CLOUDY": 3,
-    "VERY_CLOUDY": 4,
-    "FOG": 5,
-    "LIGHT_SHOWERS": 6,
-    "LIGHT_SLEET_SHOWERS": 7,
-    "LIGHT_SLEET": 8,
-    "THUNDERY_SHOWERS": 9,
-    "LIGHT_SNOW": 10,
-    "HEAVY_SNOW": 11,
-    "LIGHT_RAIN": 12,
-    "HEAVY_SHOWERS": 13,
-    "HEAVY_RAIN": 14,
-    "LIGHT_SNOW_SHOWERS": 15,
-    "HEAVY_SNOW_SHOWERS": 16,
-    "THUNDERY_HEAVY_RAIN": 17,
-    "THUNDERY_SNOW_SHOWERS": 18,
-}
-
 data: list[Any] = []
+forecast_weather = []
 
 
 async def getweather(town: str):
-    kind_list = []
-
     async with python_weather.Client(unit=python_weather.METRIC) as client:
         weather = await client.get(town)
 
         data.append(weather.current.temperature)
         data.append(weather.current.kind)
 
-        """
-        for forecast in weather.forecasts:
-            kind_in_list = [forecast]
 
-            for hourly in forecast.hourly:
-                kind_in_list.append(str(hourly.kind).upper())
-            kind_list.append(kind_in_list)
-        """
+async def weather_forecast(town: str):
+    async with python_weather.Client(unit=python_weather.METRIC) as client:
+        weather = await client.get(town)
+        print(weather)
+
+        for forecast in weather.forecasts:
+            forecast_weather.append(forecast)
+    print(forecast_weather[0])
+    return forecast_weather
+
+
+def get_weather_forecast(town: str) -> list:
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(weather_forecast(town=town))
+    return forecast_weather
 
 
 def get_data(town: str) -> list:
@@ -53,3 +40,8 @@ def get_data(town: str) -> list:
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(getweather(town))
     return data
+
+
+if __name__ == "__main__":
+    test = get_weather_forecast("L")
+    print(test[0].date)

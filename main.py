@@ -1,9 +1,10 @@
 from weather_finder import get_data
+import tkinter as tk
 import customtkinter as ctk
 from datetime import datetime
+from weather_finder import get_weather_forecast
 
-
-class WeatherApp(ctk.CTk):
+class WeatherApp_noforecoast(ctk.CTk):
     def convert_temperature(self, choice):
         try:
             temperature = self.temperature
@@ -19,7 +20,7 @@ class WeatherApp(ctk.CTk):
     def get_data_list(self, event):
         self.data_weather_list: list = get_data(self.entry_town.get())
         self.temperature = self.data_weather_list[0]
-        self.emoji_label.configure(text=f"     {self.data_weather_list[1].emoji}")
+        self.emoji_label.configure(text=f"{self.data_weather_list[1].emoji}")
 
         self.temperature_label.configure(text=f"{self.temperature} °C")
 
@@ -28,6 +29,8 @@ class WeatherApp(ctk.CTk):
 
     def __init__(self):
         super().__init__()
+
+        self.wm_iconbitmap('Weather__iOS_.ico')
         self.temperature = None
         self.data_weather_list = None
         self.title("Weather app")
@@ -37,10 +40,10 @@ class WeatherApp(ctk.CTk):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1, uniform='a')
 
-        self.left_side = ctk.CTkFrame(self)
+        self.left_side = ctk.CTkFrame(self, fg_color=r'#2b2b2b')
         self.left_side.grid(row=0, column=0, sticky="nsew")
         self.left_side.columnconfigure((0, 1, 2), weight=1, uniform='a')
-        self.left_side.columnconfigure(0, weight=2, uniform='a')
+        self.left_side.columnconfigure(0, weight=1, uniform='a')
         self.left_side.columnconfigure(1, weight=5, uniform='a')
 
         self.left_side.rowconfigure((0, 1, 2, 3, 4, 5), weight=2, uniform='a')
@@ -55,7 +58,7 @@ class WeatherApp(ctk.CTk):
         self.entry_town.bind("<Return>", self.get_data_list)
 
         self.emoji_label = ctk.CTkLabel(self.left_side,
-                                        corner_radius=10,
+                                        corner_radius=15,
                                         fg_color="gray",
                                         text="",
                                         font=("roboto", 50)
@@ -74,47 +77,61 @@ class WeatherApp(ctk.CTk):
         self.right_side = ctk.CTkFrame(self)
         self.right_side.grid(row=0, column=2, sticky='nsew')
 
-        self.right_side.columnconfigure((0, 1, 2, 3), weight=3, uniform='a')
-        self.right_side.columnconfigure(1, weight=1, uniform='a')
+        self.right_side.columnconfigure((0, 1, 2), weight=5, uniform='a')
+        self.right_side.columnconfigure(0, weight=1, uniform='a')
+        self.right_side.columnconfigure(2, weight=1, uniform='a')
 
-        self.right_side.rowconfigure((0, 1, 2, 3, 4, 5), weight=2, uniform='a')
+        self.right_side.rowconfigure((0, 1, 2, 3, 4, 5), weight=1, uniform='a')
+
         self.right_side.rowconfigure(3, weight=1, uniform='a')
 
         self.date_frame = ctk.CTkFrame(self.right_side,
-                                       corner_radius=15,
-                                       fg_color='gray',
+                                       fg_color=r'#2b2b2b',
+
+                                       corner_radius=40,
                                        )
-        self.date_frame.grid(row=1, column=0, columnspan=2, rowspan=2, sticky='nsew', padx=(0, 100))
-        self.date_frame.rowconfigure((0, 1), weight=1, uniform='a')
+        self.date_frame.grid(row=1, column=0, columnspan=4, rowspan=3, sticky='nsew', padx=(40, 50))
+        self.date_frame.columnconfigure((0, 1), weight=1, uniform='a')
+        self.date_frame.rowconfigure((0, 1, 2), weight=2, uniform='a')
+        self.date_frame.rowconfigure(2, weight=1, uniform='a')
+
 
         self.time_label = ctk.CTkLabel(self.date_frame,
-                                       corner_radius=10,
+                                       corner_radius=15,
                                        fg_color='gray',
                                        text=f"{datetime.now():%H:%M}",
                                        font=("roboto", 20)
                                        )
 
-        self.time_label.grid(row=0, sticky='nsew', pady=(15, 10))
+        self.time_label.grid(row=0,rowspan=2, column=0, columnspan=2, sticky='nsew', padx=(0, 20),pady=(5, 10))
         self.date_label = ctk.CTkLabel(self.date_frame,
-                                       corner_radius=10,
+                                       corner_radius=40,
                                        fg_color='gray',
-                                       font=('roboto', 15),
+                                       font=('roboto', 14),
                                        text=f"{datetime.now():%A, %d %B %Y}"
                                        )
-        self.date_label.grid(row=1, sticky='nsew', padx=(0, 0))
+        self.date_label.grid(row=2, column=0, columnspan=2, sticky='nsew', padx=(0, 20), pady=(7, 7))
 
         self.scaling_option = ctk.CTkOptionMenu(self.right_side,
                                                 corner_radius=10,
                                                 values=['celcius', 'fahrenheit'],
                                                 command=self.convert_temperature
                                                 )
-        self.scaling_option.grid(row=4, column=0, columnspan=2, sticky='nsew', pady=(30, 25), padx=(0, 120))
+        self.scaling_option.grid(row=4, column=0, columnspan=2, sticky='nsew', pady=(20, 35), padx=(40, 40))
 
         # middle side (for the color)
         self.middle_side = ctk.CTkFrame(self)
         self.middle_side.grid(row=0, column=1, rowspan=2, sticky='nsew')
 
 
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
-    app = WeatherApp()
+    app = WeatherApp_noforecoast()
     app.mainloop()
